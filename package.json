@@ -3,7 +3,7 @@
   "description": "Interleave plugin for collating separate text files into a single JS object",
   "author": "Damon Oehlman <damon.oehlman@sidelab.com>",
   "tags": [ "interleave" ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "engines": {
     "node": ">= 0.4.x < 0.7.0"
