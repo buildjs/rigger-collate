@@ -4,16 +4,16 @@ var collate = require('../'),
     fs = require('fs'),
     _templateComparison;
 
-describe('it should collate separate files into a single JS statement', function() {
+describe('renaming behaviour', function() {
     before(function(done) {
-        fs.readFile(path.resolve(__dirname, '_collated/_templates.js'), 'utf8', function(err, data) {
+        fs.readFile(path.resolve(__dirname, '_collated/_templates_renamed.js'), 'utf8', function(err, data) {
             _templateComparison = data;
             done(err);
         });
     });
     
     it('can collate files', function(done) {
-        collate(null, __filename, '_templates', function(err, output) {
+        collate(null, __filename, '_templates', 'cows', function(err, output) {
             assert.equal(output, _templateComparison);
             done();
         });

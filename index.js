@@ -2,7 +2,9 @@ var fs = require('fs'),
     path = require('path'),
     findit = require('findit'),
     seq = require('seq'),
-    reStripExt = /(.*)\..*$/;
+    reStripExt = /(.*)\..*$/,
+    reStripChars = /[\n\r\t]/g,
+    reUnescapedSingleQuotes = /(?!\\)\'/g;
     
 function _makeJS(collated, varName) {
     var lines = [];
@@ -20,11 +22,16 @@ function _makeJS(collated, varName) {
     return 'var ' + varName + ' = {\n' + lines.join(',\n') + '\n};\n';
 };
 
-exports = module.exports = function(interleaver, current, targetPath, callback) {
+exports = module.exports = function(interleaver, current, targetPath, varName, callback) {
     var finder, files = [], collated = {};
     
     // resolve the target path
     targetPath = path.resolve(current ? path.dirname(current) : interleaver.basedir, targetPath);
+    
+    if (typeof varName == 'function') {
+        callback = varName;
+        varName = path.basename(targetPath);
+    }
     
     // find the finder
     finder = findit.find(targetPath);
@@ -40,7 +47,9 @@ exports = module.exports = function(interleaver, current, targetPath, callback) 
             }
             else {
                 // remove line breaks from the string
-                collated[itemName] = data.replace(/[\n\r]/g, '');
+                collated[itemName] = data
+                    .replace(reStripChars, '')
+                    .replace(reUnescapedSingleQuotes, '"');
                 stack.ok();
             }
         });
@@ -57,7 +66,7 @@ exports = module.exports = function(interleaver, current, targetPath, callback) 
             })
             .parEach(readFile)
             .seq(function() {
-                callback(null, _makeJS(collated, path.basename(targetPath)));
+                callback(null, _makeJS(collated, varName));
             });
     });
 };
