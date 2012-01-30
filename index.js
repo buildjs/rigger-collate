@@ -20,10 +20,14 @@ function _makeJS(collated, varName) {
     return 'var ' + varName + ' = {\n' + lines.join(',\n') + '\n};\n';
 };
 
-exports = module.exports = function(targetPath, callback) {
-    var finder = findit.find(targetPath),
-        files = [],
-        collated = {};
+exports = module.exports = function(interleaver, current, targetPath, callback) {
+    var finder, files = [], collated = {};
+    
+    // resolve the target path
+    targetPath = path.resolve(current ? path.dirname(current) : interleaver.basedir, targetPath);
+    
+    // find the finder
+    finder = findit.find(targetPath);
         
     function readFile(filename, index) {
         var stack = this;
@@ -47,9 +51,13 @@ exports = module.exports = function(targetPath, callback) {
     });
     
     finder.on('end', function() {
-        seq(files).parEach(readFile).seq(function() {
-            callback(null, _makeJS(collated, path.basename(targetPath)));
-        });
-        
+        seq(files)
+            ['catch'](function(err) {
+                callback(err);
+            })
+            .parEach(readFile)
+            .seq(function() {
+                callback(null, _makeJS(collated, path.basename(targetPath)));
+            });
     });
 };
