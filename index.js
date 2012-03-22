@@ -3,7 +3,7 @@ var fs = require('fs'),
     findit = require('findit'),
     seq = require('seq'),
     reStripExt = /(.*)\..*$/,
-    reStripChars = /[\n\r\t]/g,
+    reStripChars = /(\>)[\n\s]+(\<)/g,
     reUnescapedSingleQuotes = /(?!\\)\'/g;
     
 function _makeJS(collated, varName) {
@@ -40,16 +40,21 @@ exports = module.exports = function(interleaver, current, targetPath, varName, c
         var stack = this;
         
         fs.readFile(filename, 'utf8', function(err, data) {
-            var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1');
+            var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1'),
+                stripMatch;
             
             if (err) {
                 throw err;
             }
             else {
+                // fix unescaped single quotes
+                data = data.replace(reUnescapedSingleQuotes, '"');
+                
                 // remove line breaks from the string
-                collated[itemName] = data
-                    .replace(reStripChars, '')
-                    .replace(reUnescapedSingleQuotes, '"');
+                data = data.replace(reStripChars, '$1$2');
+                
+                // update the collated itemname
+                collated[itemName] = data;
                 stack.ok();
             }
         });
