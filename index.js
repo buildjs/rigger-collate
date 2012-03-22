@@ -3,7 +3,7 @@ var fs = require('fs'),
     findit = require('findit'),
     seq = require('seq'),
     reStripExt = /(.*)\..*$/,
-    reStripChars = /(\>)[\n\s]+(\<)/g,
+    reStripChars = /(^\s+|\s+$)/mg,
     reUnescapedSingleQuotes = /(?!\\)\'/g;
     
 function _makeJS(collated, varName) {
@@ -51,7 +51,7 @@ exports = module.exports = function(interleaver, current, targetPath, varName, c
                 data = data.replace(reUnescapedSingleQuotes, '"');
                 
                 // remove line breaks from the string
-                data = data.replace(reStripChars, '$1$2');
+                data = data.replace(reStripChars, '').replace(/[\n\r]/g,  '');
                 
                 // update the collated itemname
                 collated[itemName] = data;

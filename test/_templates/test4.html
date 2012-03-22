@@ -1,0 +1,10 @@
+{{#each group}}
+<div class="lbs-poigroup">
+    <h3>{{ title }}</h3>
+    
+    <ul class="lbs-results">
+    {{#each items}}
+        <li>{{ content }}</li>
+    {{/each}}
+</div>
+{{/each}}
