@@ -50,7 +50,7 @@ exports = module.exports = function(rigger, targetPath, varName) {
                 data = data.replace(reUnescapedSingleQuotes, '"');
                 
                 // remove line breaks from the string
-                data = data.replace(reStripChars, '').replace(/[\n\r]/g,  '');
+                data = data.replace(reStripChars, '');
                 
                 // update the collated itemname
                 collated[itemName] = data;
