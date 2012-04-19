@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "rigger": "0.2.x",
-    "mocha": "*"
+    "mocha": "1.x.x"
   },
   "repository": {
     "type": "git",
