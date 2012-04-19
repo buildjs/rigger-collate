@@ -32,7 +32,7 @@ exports = module.exports = function(rigger, targetPath, varName) {
     targetPath = path.resolve(rigger.cwd, targetPath || 'resources');
     
     // initialise the variable name to match the name of the target directory
-    varName = varName || path.basename(targetPath);
+    varName = (varName || path.basename(targetPath)).replace(/\-/g, '_');
     
     // find the finder
     finder = findit.find(targetPath);

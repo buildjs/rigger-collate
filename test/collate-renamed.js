@@ -20,6 +20,6 @@ describe('renaming behaviour', function() {
             }
         };
         
-        collate.call(scope, { cwd: path.resolve(__dirname) }, '_templates', 'cows');
+        collate.call(scope, { cwd: path.resolve(__dirname) }, '_templates', 'super-cows');
     });
 });

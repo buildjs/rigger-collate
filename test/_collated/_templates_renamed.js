@@ -1,4 +1,4 @@
-var _cows = {
+var _super_cows = {
   'sub/path/test2': '<div id="test">{{ title }}</div>',
   'test1': '<div id="test">{{ title }}</div>',
   'test2': '<div id="test2"><p><strong>Top</strong></p></div>',
