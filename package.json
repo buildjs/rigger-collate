@@ -16,7 +16,8 @@
     "seq": "0.3.x"
   },
   "devDependencies": {
-    "rigger": "0.2.x"
+    "rigger": "0.2.x",
+    "mocha": "*"
   },
   "repository": {
     "type": "git",
