@@ -4,6 +4,8 @@ var fs = require('fs'),
     seq = require('seq'),
     reStripExt = /(.*)\..*$/,
     reStripChars = /(^\s+|\s+$)/mg,
+    reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
+    reLineBreaks = /[\n\r]/g,
     reUnescapedSingleQuotes = /(?!\\)\'/g;
     
 function _makeJS(collated, varName) {
@@ -51,6 +53,12 @@ exports = module.exports = function(rigger, targetPath, varName) {
                 
                 // remove line breaks from the string
                 data = data.replace(reStripChars, '');
+                
+                // remove line breaks between tags 
+                data = data.replace(reLineBreakSeparatedTags, '$1$2');
+                
+                // replace remaining line breaks with spaces
+                data = data.replace(reLineBreaks,  ' ');
                 
                 // update the collated itemname
                 collated[itemName] = data;
