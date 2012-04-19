@@ -2,8 +2,11 @@
   "name": "rigger-collate",
   "description": "Rigger plugin for collating separate text files into a single JS object",
   "author": "Damon Oehlman <damon.oehlman@sidelab.com>",
-  "tags": [ "rigger", "build" ],
-  "version": "0.2.0",
+  "tags": [
+    "rigger",
+    "build"
+  ],
+  "version": "0.2.1",
   "main": "index.js",
   "engines": {
     "node": ">= 0.4.x < 0.7.0"
@@ -13,7 +16,7 @@
     "seq": "0.3.x"
   },
   "devDependencies": {
-     "rigger": "0.2.x"
+    "rigger": "0.2.x"
   },
   "repository": {
     "type": "git",
@@ -22,6 +25,6 @@
   "bugs": {
     "url": "http://github.com/DamonOehlman/rigger-collate/issues"
   },
-  
-  "contributors": []
+  "contributors": [],
+  "optionalDependencies": {}
 }
