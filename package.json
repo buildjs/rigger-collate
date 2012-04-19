@@ -25,6 +25,11 @@
   "bugs": {
     "url": "http://github.com/DamonOehlman/rigger-collate/issues"
   },
+  
+  "scripts": {
+    "test": "mocha --reporter spec"
+  },
+  
   "contributors": [],
   "optionalDependencies": {}
 }
