@@ -13,9 +13,13 @@ describe('it should collate separate files into a single JS statement', function
     });
     
     it('can collate files', function(done) {
-        collate(null, __filename, '_templates', function(err, output) {
-            assert.equal(output, _templateComparison);
-            done();
-        });
+        var scope = {
+            done: function(err, output) {
+                assert.equal(output, _templateComparison);
+                done();
+            }
+        };
+        
+        collate.call(scope, { cwd: path.resolve(__dirname) }, '_templates');
     });
 });

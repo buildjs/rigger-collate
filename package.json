@@ -1,9 +1,9 @@
 {
-  "name": "interleave-collate",
-  "description": "Interleave plugin for collating separate text files into a single JS object",
+  "name": "rigger-collate",
+  "description": "Rigger plugin for collating separate text files into a single JS object",
   "author": "Damon Oehlman <damon.oehlman@sidelab.com>",
-  "tags": [ "interleave" ],
-  "version": "0.1.0",
+  "tags": [ "rigger", "build" ],
+  "version": "0.2.0",
   "main": "index.js",
   "engines": {
     "node": ">= 0.4.x < 0.7.0"
@@ -13,14 +13,14 @@
     "seq": "0.3.x"
   },
   "devDependencies": {
-     "interleave": ">= 0.1.2"
+     "rigger": "0.2.x"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/DamonOehlman/interleave-collate.git"
+    "url": "git://github.com/DamonOehlman/rigger-collate.git"
   },
   "bugs": {
-    "url": "http://github.com/DamonOehlman/interleave-collate/issues"
+    "url": "http://github.com/DamonOehlman/rigger-collate/issues"
   },
   
   "contributors": []

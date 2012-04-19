@@ -20,18 +20,17 @@ function _makeJS(collated, varName) {
     });
     
     return 'var ' + varName + ' = {\n' + lines.join(',\n') + '\n};\n';
-};
+}
 
-exports = module.exports = function(interleaver, current, targetPath, varName, callback) {
-    var finder, files = [], collated = {};
+exports = module.exports = function(rigger, targetPath, varName) {
+    var finder, files = [], collated = {},
+        scope = this;
     
     // resolve the target path
-    targetPath = path.resolve(current ? path.dirname(current) : interleaver.basedir, targetPath);
+    targetPath = path.resolve(rigger.cwd, targetPath || 'resources');
     
-    if (typeof varName == 'function') {
-        callback = varName;
-        varName = path.basename(targetPath);
-    }
+    // initialise the variable name to match the name of the target directory
+    varName = varName || path.basename(targetPath);
     
     // find the finder
     finder = findit.find(targetPath);
@@ -67,11 +66,11 @@ exports = module.exports = function(interleaver, current, targetPath, varName, c
     finder.on('end', function() {
         seq(files)
             ['catch'](function(err) {
-                callback(err);
+                scope.done(err);
             })
             .parEach(readFile)
             .seq(function() {
-                callback(null, _makeJS(collated, varName));
+                scope.done(null, _makeJS(collated, varName));
             });
     });
 };

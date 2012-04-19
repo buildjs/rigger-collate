@@ -13,9 +13,13 @@ describe('renaming behaviour', function() {
     });
     
     it('can collate files', function(done) {
-        collate(null, __filename, '_templates', 'cows', function(err, output) {
-            assert.equal(output, _templateComparison);
-            done();
-        });
+        var scope = {
+            done: function(err, output) {
+                assert.equal(output, _templateComparison);
+                done();
+            }
+        };
+        
+        collate.call(scope, { cwd: path.resolve(__dirname) }, '_templates', 'cows');
     });
 });
