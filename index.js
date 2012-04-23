@@ -29,7 +29,7 @@ exports = module.exports = function(rigger, targetPath, varName) {
         scope = this;
     
     // resolve the target path
-    targetPath = path.resolve(rigger.cwd, targetPath || 'resources');
+    targetPath = rigger.resolve(targetPath || 'resources');
     
     // initialise the variable name to match the name of the target directory
     varName = (varName || path.basename(targetPath)).replace(/\-/g, '_');

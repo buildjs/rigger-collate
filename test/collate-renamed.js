@@ -2,6 +2,7 @@ var collate = require('../'),
     assert = require('assert'),
     path = require('path'),
     fs = require('fs'),
+    rigger = require('./mocks/rigger'),
     _templateComparison;
 
 describe('renaming behaviour', function() {
@@ -20,6 +21,6 @@ describe('renaming behaviour', function() {
             }
         };
         
-        collate.call(scope, { cwd: path.resolve(__dirname) }, '_templates', 'super-cows');
+        collate.call(scope, rigger, '_templates', 'super-cows');
     });
 });

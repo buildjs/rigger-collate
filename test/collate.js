@@ -1,6 +1,7 @@
 var collate = require('../'),
     assert = require('assert'),
     path = require('path'),
+    rigger = require('./mocks/rigger'),
     fs = require('fs'),
     _templateComparison;
 
@@ -20,6 +21,6 @@ describe('it should collate separate files into a single JS statement', function
             }
         };
         
-        collate.call(scope, { cwd: path.resolve(__dirname) }, '_templates');
+        collate.call(scope, rigger, '_templates');
     });
 });
