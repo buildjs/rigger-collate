@@ -6,7 +6,7 @@
     "rigger",
     "build"
   ],
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "index.js",
   "engines": {
     "node": ">= 0.4.x < 0.7.0"
@@ -25,11 +25,9 @@
   "bugs": {
     "url": "http://github.com/DamonOehlman/rigger-collate/issues"
   },
-  
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --reporter spec"
   },
-  
   "contributors": [],
   "optionalDependencies": {}
 }
