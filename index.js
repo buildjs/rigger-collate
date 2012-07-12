@@ -1,4 +1,5 @@
-var fs = require('fs'),
+var async = require('async'),
+    fs = require('fs'),
     path = require('path'),
     walk = require('walkdir'),
     reStripExt = /(.*)\..*$/,
@@ -16,7 +17,7 @@ function _makeJS(collated, varName) {
         varName = '_' + varName;
     }
     
-    Object.keys(collated).forEach(function(key) {
+    Object.keys(collated).sort().forEach(function(key) {
         lines.push('  \'' + key + '\': \'' + collated[key] + '\'');
     });
     
@@ -37,33 +38,32 @@ exports = module.exports = function(rigger, targetPath, varName) {
     // find the finder
     finder = walk(targetPath);
         
-    function readFile(filename, index) {
+    function readFile(filename, callback) {
         var stack = this;
         
         fs.readFile(filename, 'utf8', function(err, data) {
             var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1'),
                 stripMatch;
+                
+            // if we hit an error, abort
+            if (err) return callback(err);
             
-            if (err) {
-                throw err;
-            }
-            else {
-                // fix unescaped single quotes
-                data = data.replace(reUnescapedSingleQuotes, '"');
-                
-                // remove line breaks from the string
-                data = data.replace(reStripChars, '');
-                
-                // remove line breaks between tags 
-                data = data.replace(reLineBreakSeparatedTags, '$1$2');
-                
-                // replace remaining line breaks with spaces
-                data = data.replace(reLineBreaks,  ' ');
-                
-                // update the collated itemname
-                collated[itemName] = data;
-                stack.ok();
-            }
+            // fix unescaped single quotes
+            data = data.replace(reUnescapedSingleQuotes, '"');
+            
+            // remove line breaks from the string
+            data = data.replace(reStripChars, '');
+            
+            // remove line breaks between tags 
+            data = data.replace(reLineBreakSeparatedTags, '$1$2');
+            
+            // replace remaining line breaks with spaces
+            data = data.replace(reLineBreaks,  ' ');
+            
+            // update the collated itemname
+            collated[itemName] = data;
+            
+            callback();
         });
     }
     
@@ -72,13 +72,8 @@ exports = module.exports = function(rigger, targetPath, varName) {
     });
     
     finder.on('end', function() {
-        seq(files)
-            ['catch'](function(err) {
-                scope.done(err);
-            })
-            .parEach(readFile)
-            .seq(function() {
-                scope.done(null, _makeJS(collated, varName));
-            });
+        async.forEach(files, readFile, function(err) {
+            scope.done(err, err ? null : _makeJS(collated, varName));
+        });
     });
 };
