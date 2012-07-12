@@ -16,6 +16,7 @@ describe('it should collate separate files into a single JS statement', function
     it('can collate files', function(done) {
         var scope = {
             done: function(err, output) {
+                console.log(output);
                 assert.equal(output, _templateComparison);
                 done();
             }

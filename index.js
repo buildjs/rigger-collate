@@ -1,7 +1,6 @@
 var fs = require('fs'),
     path = require('path'),
     walk = require('walkdir'),
-    seq = require('seq'),
     reStripExt = /(.*)\..*$/,
     reStripChars = /(^\s+|\s+$)/mg,
     reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
