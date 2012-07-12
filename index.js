@@ -1,6 +1,6 @@
 var fs = require('fs'),
     path = require('path'),
-    findit = require('findit'),
+    walk = require('walkdir'),
     seq = require('seq'),
     reStripExt = /(.*)\..*$/,
     reStripChars = /(^\s+|\s+$)/mg,
@@ -25,6 +25,7 @@ function _makeJS(collated, varName) {
 }
 
 exports = module.exports = function(rigger, targetPath, varName) {
+
     var finder, files = [], collated = {},
         scope = this;
     
@@ -35,7 +36,7 @@ exports = module.exports = function(rigger, targetPath, varName) {
     varName = (varName || path.basename(targetPath)).replace(/\-/g, '_');
     
     // find the finder
-    finder = findit.find(targetPath);
+    finder = walk(targetPath);
         
     function readFile(filename, index) {
         var stack = this;
