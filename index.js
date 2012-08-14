@@ -1,7 +1,7 @@
 var async = require('async'),
     fs = require('fs'),
     path = require('path'),
-    walk = require('walkdir'),
+    readdirp = require('readdirp'),
     reStripExt = /(.*)\..*$/,
     reStripChars = /(^\s+|\s+$)/mg,
     reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
@@ -28,19 +28,10 @@ exports = module.exports = function(rigger, targetPath, varName) {
 
     var finder, files = [], collated = {},
         scope = this;
-    
-    // resolve the target path
-    targetPath = rigger.resolve(targetPath || 'resources');
-    
-    // initialise the variable name to match the name of the target directory
-    varName = (varName || path.basename(targetPath)).replace(/\-/g, '_');
-    
-    // find the finder
-    finder = walk(targetPath);
-        
-    function readFile(filename, callback) {
-        var stack = this;
-        
+
+    function readFile(file, callback) {
+        var filename = file.fullPath;
+
         fs.readFile(filename, 'utf8', function(err, data) {
             var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1'),
                 stripMatch;
@@ -67,12 +58,16 @@ exports = module.exports = function(rigger, targetPath, varName) {
         });
     }
     
-    finder.on('file', function(file, stat) {
-        files.push(file);
-    });
+    // resolve the target path
+    targetPath = rigger.resolve(targetPath || 'resources');
     
-    finder.on('end', function() {
-        async.forEach(files, readFile, function(err) {
+    // initialise the variable name to match the name of the target directory
+    varName = (varName || path.basename(targetPath)).replace(/\-/g, '_');
+    
+    readdirp({ root: targetPath }, function(err, res) {
+        if (err) return scope.done(err);
+
+        async.forEach(res.files, readFile, function(err) {
             scope.done(err, err ? null : _makeJS(collated, varName));
         });
     });
