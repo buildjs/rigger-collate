@@ -6,6 +6,7 @@ var async = require('async'),
     reStripChars = /(^\s+|\s+$)/mg,
     reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
     reLineBreaks = /[\n\r]/g,
+    reBackslash = /\\/g,
     reUnescapedSingleQuotes = /(?!\\)\'/g;
     
 function _makeJS(collated, varName) {
@@ -33,7 +34,7 @@ exports = module.exports = function(rigger, targetPath, varName) {
         var filename = file.fullPath;
 
         fs.readFile(filename, 'utf8', function(err, data) {
-            var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1'),
+            var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1').replace(reBackslash, '/'),
                 stripMatch;
                 
             // if we hit an error, abort
