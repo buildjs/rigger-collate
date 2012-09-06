@@ -6,7 +6,7 @@
     "rigger",
     "build"
   ],
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "index.js",
   "engines": {
     "node": ">= 0.4.x < 0.9.0"
