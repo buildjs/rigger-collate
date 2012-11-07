@@ -5,7 +5,11 @@ var async = require('async'),
     reStripExt = /(.*)\..*$/,
     reStripChars = /(^\s+|\s+$)/mg,
     reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
+
+    // intialise line endings based on platform
+    lineEnding = process.platform == 'win32' ? '\r\n' : '\n',
     reLineBreaks = /[\n\r]/g,
+
     reBackslash = /\\/g,
     reUnescapedSingleQuotes = /(?!\\)\'/g;
     
@@ -22,7 +26,9 @@ function _makeJS(collated, opts) {
         lines.push('  \'' + key + '\': \'' + collated[key] + '\'');
     });
     
-    return 'var ' + varName + ' = {\n' + lines.join(',\n') + '\n};\n';
+    return 'var ' + varName + ' = {' + lineEnding +
+        lines.join(',' + lineEnding) + lineEnding + 
+        '};' + lineEnding;
 }
 
 exports = module.exports = function(rigger, targetPath, opts) {
