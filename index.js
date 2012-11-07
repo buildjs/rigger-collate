@@ -74,7 +74,7 @@ exports = module.exports = function(rigger, targetPath, opts) {
             if (err) return callback(err);
 
             // add the collated item name to the stream
-            collated[file.key] = transformer(data);
+            collated[file.key] = transformer(data, opts);
 
             callback();
         });
