@@ -32,7 +32,7 @@ exports = module.exports = function(rigger, targetPath, opts) {
 
     var finder, files = [], collated = {},
         scope = this,
-        transformer;
+        transformer = transformers.stripWhitespace;
 
     // if opts is a string, then attempt to parse into a json object
     // if parsing fails, fallback to using as the varname
@@ -53,9 +53,18 @@ exports = module.exports = function(rigger, targetPath, opts) {
         opts[key.toLowerCase()] = opts[key];
     });
 
-    // initialise the join style
-    transformer = transformers[(opts.joinstyle || 'stripWhitespace')] ||
-                    transformers.stripWhitespace;
+    // check for a transform op
+    if (typeof opts.transform == 'function') {
+        transformer = opts.transform;
+    }
+    else if (typeof opts.transform == 'string' || (opts.transform instanceof String)) {
+        transformer = transformers[opts.transform];
+
+        // if the transformer is now undefined, report an error
+        if (! transformer) {
+            return scope.done(new Error('Unable to apply "' + opts.transform + '" transform during collation'));
+        }
+    }
 
     function readFile(file, callback) {
         var filename = file.fullPath;
