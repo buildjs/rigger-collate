@@ -3,16 +3,12 @@ var async = require('async'),
     path = require('path'),
     readdirp = require('readdirp'),
     _ = require('underscore'),
+    transformers = require('./lib/transformers'),
     reStripExt = /(.*)\..*$/,
-    reStripChars = /(^\s+|\s+$)/mg,
-    reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
 
     // intialise line endings based on platform
     lineEnding = process.platform == 'win32' ? '\r\n' : '\n',
-    reLineBreaks = /[\n\r]/g,
-
-    reBackslash = /\\/g,
-    reUnescapedSingleQuotes = /(?!\\)\'/g;
+    reBackslash = /\\/g;
     
 function _makeJS(collated, opts) {
     var lines = [],
@@ -24,7 +20,7 @@ function _makeJS(collated, opts) {
     }
     
     Object.keys(collated).sort().forEach(function(key) {
-        lines.push('  \'' + key + '\': \'' + collated[key] + '\'');
+        lines.push('  \'' + key + '\': ' + collated[key]);
     });
     
     return 'var ' + varName + ' = {' + lineEnding +
@@ -35,7 +31,8 @@ function _makeJS(collated, opts) {
 exports = module.exports = function(rigger, targetPath, opts) {
 
     var finder, files = [], collated = {},
-        scope = this;
+        scope = this,
+        transformer;
 
     // if opts is a string, then attempt to parse into a json object
     // if parsing fails, fallback to using as the varname
@@ -56,28 +53,20 @@ exports = module.exports = function(rigger, targetPath, opts) {
         opts[key.toLowerCase()] = opts[key];
     });
 
+    // initialise the join style
+    transformer = transformers[(opts.joinstyle || 'stripWhitespace')] ||
+                    transformers.stripWhitespace;
+
     function readFile(file, callback) {
         var filename = file.fullPath;
 
         fs.readFile(filename, 'utf8', function(err, data) {
             // if we hit an error, abort
             if (err) return callback(err);
-            
-            // fix unescaped single quotes
-            data = data.replace(reUnescapedSingleQuotes, '"');
-            
-            // remove line breaks from the string
-            data = data.replace(reStripChars, '');
-            
-            // remove line breaks between tags 
-            data = data.replace(reLineBreakSeparatedTags, '$1$2');
-            
-            // replace remaining line breaks with spaces
-            data = data.replace(reLineBreaks,  ' ');
-            
-            // update the collated itemname
-            collated[file.key] = data;
-            
+
+            // add the collated item name to the stream
+            collated[file.key] = transformer(data);
+
             callback();
         });
     }
