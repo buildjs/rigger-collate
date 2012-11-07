@@ -2,6 +2,7 @@ var async = require('async'),
     fs = require('fs'),
     path = require('path'),
     readdirp = require('readdirp'),
+    _ = require('underscore'),
     reStripExt = /(.*)\..*$/,
     reStripChars = /(^\s+|\s+$)/mg,
     reLineBreakSeparatedTags = /(\>|\})[\n\r]+(<|\{)/g,
@@ -59,9 +60,6 @@ exports = module.exports = function(rigger, targetPath, opts) {
         var filename = file.fullPath;
 
         fs.readFile(filename, 'utf8', function(err, data) {
-            var itemName = filename.slice(targetPath.length + 1).replace(reStripExt, '$1').replace(reBackslash, '/'),
-                stripMatch;
-                
             // if we hit an error, abort
             if (err) return callback(err);
             
@@ -78,7 +76,7 @@ exports = module.exports = function(rigger, targetPath, opts) {
             data = data.replace(reLineBreaks,  ' ');
             
             // update the collated itemname
-            collated[itemName] = data;
+            collated[file.key] = data;
             
             callback();
         });
@@ -90,8 +88,29 @@ exports = module.exports = function(rigger, targetPath, opts) {
     // initialise the variable name to match the name of the target directory
     opts.varname = (opts.varname || path.basename(targetPath)).replace(/\-/g, '_');
     
+    // read all the files from the target root folder
     readdirp({ root: targetPath }, function(err, res) {
+        var keyCounts = {};
+
         if (err) return scope.done(err);
+
+        // initialise the key for each of the files
+        res.files.forEach(function(file) {
+            file.key = file.fullPath.slice(targetPath.length + 1)
+                                .replace(reStripExt, '$1')
+                                .replace(reBackslash, '/');
+
+            // record the key in the all keys hash
+            keyCounts[file.key] = (keyCounts[file.key] || 0) + 1;
+        });
+
+        // iterate through the files again looking for non-unique keys
+        res.files.forEach(function(file) {
+            // if the key is not unique add the extension to the key
+            if (keyCounts[file.key] > 1) {
+                file.key += path.extname(file.fullPath);
+            }
+        });
 
         async.forEach(res.files, readFile, function(err) {
             scope.done(err, err ? null : _makeJS(collated, opts));
