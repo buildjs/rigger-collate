@@ -28,11 +28,14 @@ function _makeJS(collated, opts) {
         '};' + lineEnding;
 }
 
-exports = module.exports = function(rigger, targetPath, opts) {
+exports = module.exports = function(rigger) {
 
     var finder, files = [], collated = {},
         scope = this,
-        transformer = transformers.stripWhitespace;
+        transformer = transformers.stripWhitespace,
+        extraArgs = arguments[1].split(/\s+/),
+        targetPath = extraArgs[0],
+        opts = arguments[2] || extraArgs.slice(1).join(' ');
 
     // if opts is a string, then attempt to parse into a json object
     // if parsing fails, fallback to using as the varname
