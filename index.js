@@ -9,10 +9,10 @@ var async = require('async'),
     reBackslash = /\\/g,
     reUnescapedSingleQuotes = /(?!\\)\'/g;
     
-function _makeJS(collated, varName) {
-    var lines = [];
+function _makeJS(collated, opts) {
+    var lines = [],
+        varName = opts.varname || 'collated';
         
-    // ensure we have a varname
     varName = varName || 'collated';
     if (varName[0] !== '_') {
         varName = '_' + varName;
@@ -25,10 +25,29 @@ function _makeJS(collated, varName) {
     return 'var ' + varName + ' = {\n' + lines.join(',\n') + '\n};\n';
 }
 
-exports = module.exports = function(rigger, targetPath, varName) {
+exports = module.exports = function(rigger, targetPath, opts) {
 
     var finder, files = [], collated = {},
         scope = this;
+
+    // if opts is a string, then attempt to parse into a json object
+    // if parsing fails, fallback to using as the varname
+    if (typeof opts == 'string' || (opts instanceof String)) {
+        try {
+            opts = JSON.parse(opts);
+        }
+        catch (e) {
+            opts = { varname: opts };
+        }
+    }
+
+    // ensure we have opts
+    opts = opts || {};
+
+    // ensure the opts all have lowercase keys
+    Object.keys(opts).forEach(function(key) {
+        opts[key.toLowerCase()] = opts[key];
+    });
 
     function readFile(file, callback) {
         var filename = file.fullPath;
@@ -63,13 +82,13 @@ exports = module.exports = function(rigger, targetPath, varName) {
     targetPath = rigger.resolve(targetPath || 'resources');
     
     // initialise the variable name to match the name of the target directory
-    varName = (varName || path.basename(targetPath)).replace(/\-/g, '_');
+    opts.varname = (opts.varname || path.basename(targetPath)).replace(/\-/g, '_');
     
     readdirp({ root: targetPath }, function(err, res) {
         if (err) return scope.done(err);
 
         async.forEach(res.files, readFile, function(err) {
-            scope.done(err, err ? null : _makeJS(collated, varName));
+            scope.done(err, err ? null : _makeJS(collated, opts));
         });
     });
 };
