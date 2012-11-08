@@ -44,6 +44,12 @@ exports = module.exports = function(rigger) {
             opts = JSON.parse(opts);
         }
         catch (e) {
+            // if the opts string contains json then report an error
+            if (opts.indexOf('{') >= 0) {
+                throw new Error('Unable to parse collate opts');
+            }
+
+            // otherwise initialise as the variable name
             opts = { varname: opts };
         }
     }

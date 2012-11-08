@@ -5,7 +5,7 @@ var collate = require('../'),
     rigger = require('./mocks/rigger'),
     _templateComparison;
 
-describe('array transform behaviour', function() {
+describe('array transform, using opts', function() {
     before(function(done) {
         fs.readFile(path.resolve(__dirname, '_collated/_templates_array.js'), 'utf8', function(err, data) {
             _templateComparison = data;
@@ -21,6 +21,6 @@ describe('array transform behaviour', function() {
             }
         };
         
-        collate.call(scope, rigger, '_templates', { transform: 'array' });
+        collate.call(scope, rigger, '_templates { "transform": "array" }');
     });
 });
