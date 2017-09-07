@@ -6,7 +6,7 @@
     "rigger",
     "build"
   ],
-  "version": "0.5.3",
+  "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
     "async": "^2.5.0",
