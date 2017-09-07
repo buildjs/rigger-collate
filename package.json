@@ -9,12 +9,12 @@
   "version": "0.5.3",
   "main": "index.js",
   "dependencies": {
-    "async": "0.2.x",
-    "readdirp": "0.2.x",
-    "underscore": "1.4.x"
+    "async": "^2.5.0",
+    "readdirp": "^2.1.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "mocha": "1.9.x"
+    "mocha": "^3.5.0"
   },
   "repository": {
     "type": "git",
